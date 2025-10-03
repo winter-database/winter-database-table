@@ -6,7 +6,7 @@
 
     <groupId>io.github.winter-database</groupId>
     <artifactId>winter-database-table</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>table</name>
     <description>表结构</description>
     <url>https://github.com/winter-database/winter-database-table</url>
@@ -37,7 +37,7 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <winter-boot-tuple.version>1.0.1</winter-boot-tuple.version>
+        <winter-boot-tuple.version>1.0.2</winter-boot-tuple.version>
         <jakarta-validation-api.version>3.1.1</jakarta-validation-api.version>
         <central-publishing-maven-plugin.version>0.7.0</central-publishing-maven-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>

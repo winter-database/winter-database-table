@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -102,7 +103,7 @@ public final class TableSchemaReader {
         String idName = primaryKey.stream()
                 .filter(Objects::nonNull)
                 .map(String::trim)
-                .filter(x -> !x.isEmpty())
+                .filter(Predicate.not(String::isEmpty))
                 .findFirst()
                 .orElse("");
         tableSchema.setIdName(idName);
@@ -141,7 +142,7 @@ public final class TableSchemaReader {
 
         List<String> columnNames = columns.stream()
                 .map(Column::getName)
-                .filter(x -> !x.isEmpty())
+                .filter(Predicate.not(String::isEmpty))
                 .toList();
         tableSchema.setColumnNames(columnNames);
     }
@@ -157,7 +158,7 @@ public final class TableSchemaReader {
         Set<String> columnNames = columns.stream()
                 .filter(Column::isAutoIncrement)
                 .map(Column::getName)
-                .filter(x -> !x.isEmpty())
+                .filter(Predicate.not(String::isEmpty))
                 .collect(Collectors.toSet());
         tableSchema.setColumnsOnAutoIncrement(columnNames);
     }
@@ -174,7 +175,8 @@ public final class TableSchemaReader {
                 .collect(
                         Collectors.toMap(
                                 Column::getName,
-                                Column::getClazz
+                                Column::getClazz,
+                                (x, y) -> y
                         )
                 );
         tableSchema.setValueTypes(valueTypes);
@@ -221,7 +223,8 @@ public final class TableSchemaReader {
                                             }
 
                                             throw new RuntimeException(String.format("unsupported clazz, clazz: %s, columnName: %s", clazz, column.getName()));
-                                        }
+                                        },
+                                        (x, y) -> y
                                 )
                 );
         tableSchema.setDefaultValues(defaultValues);
@@ -248,9 +251,9 @@ public final class TableSchemaReader {
         List<Column> columns = tableSchema.getColumns();
 
         List<String> columnNames = columns.stream()
-                .filter(x -> !x.isDefaultCurrentDateOnInsert())
+                .filter(Predicate.not(Column::isDefaultCurrentDateOnInsert))
                 .map(Column::getName)
-                .filter(x -> !x.isEmpty())
+                .filter(Predicate.not(String::isEmpty))
                 .toList();
         tableSchema.setColumnsOnInsert(columnNames);
     }
@@ -266,7 +269,7 @@ public final class TableSchemaReader {
         Set<String> columnNames = columns.stream()
                 .filter(Column::isDefaultCurrentDateOnInsert)
                 .map(Column::getName)
-                .filter(x -> !x.isEmpty())
+                .filter(Predicate.not(String::isEmpty))
                 .collect(Collectors.toSet());
         tableSchema.setDefaultCurrentDateOnInsert(columnNames);
     }
@@ -306,10 +309,10 @@ public final class TableSchemaReader {
         List<Column> columns = tableSchema.getColumns();
 
         Set<String> columnNames = columns.stream()
-                .filter(x -> !x.isDefaultCurrentDateOnUpdate())
-                .filter(x -> !x.isDefaultCurrentDateOnInsert())
+                .filter(Predicate.not(Column::isDefaultCurrentDateOnUpdate))
+                .filter(Predicate.not(Column::isDefaultCurrentDateOnInsert))
                 .map(Column::getName)
-                .filter(x -> !x.isEmpty())
+                .filter(Predicate.not(String::isEmpty))
                 .collect(Collectors.toSet());
         tableSchema.setColumnsOnUpdate(columnNames);
     }
@@ -325,7 +328,7 @@ public final class TableSchemaReader {
         Set<String> columnNames = columns.stream()
                 .filter(Column::isDefaultCurrentDateOnUpdate)
                 .map(Column::getName)
-                .filter(x -> !x.isEmpty())
+                .filter(Predicate.not(String::isEmpty))
                 .collect(Collectors.toSet());
         tableSchema.setDefaultCurrentDateOnUpdate(columnNames);
     }

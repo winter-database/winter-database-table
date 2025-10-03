@@ -8,6 +8,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -311,7 +312,7 @@ public class TableReader {
                 .filter(Key::isPrimary)
                 .map(Key::getColumnNames)
                 .filter(Objects::nonNull)
-                .filter(x -> !x.isEmpty())
+                .filter(Predicate.not(List::isEmpty))
                 .findFirst()
                 .orElse(Collections.emptyList());
         if (data.isEmpty()) {
@@ -336,8 +337,8 @@ public class TableReader {
         Map<String, List<String>> data = keys.stream()
                 .filter(Objects::nonNull)
                 .filter(Key::isUnique)
-                .filter(x -> !x.isPrimary())
-                .collect(Collectors.toMap(Key::getName, Key::getColumnNames));
+                .filter(Predicate.not(Key::isPrimary))
+                .collect(Collectors.toMap(Key::getName, Key::getColumnNames, (x, y) -> y));
         if (data.isEmpty()) {
             return;
         }
@@ -359,9 +360,9 @@ public class TableReader {
                            @NotNull List<Key> keys) throws SQLException {
         Map<String, List<String>> data = keys.stream()
                 .filter(Objects::nonNull)
-                .filter(x -> !x.isPrimary())
-                .filter(x -> !x.isUnique())
-                .collect(Collectors.toMap(Key::getName, Key::getColumnNames));
+                .filter(Predicate.not(Key::isPrimary))
+                .filter(Predicate.not(Key::isUnique))
+                .collect(Collectors.toMap(Key::getName, Key::getColumnNames, (x, y) -> y));
         if (data.isEmpty()) {
             return;
         }
